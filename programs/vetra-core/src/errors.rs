@@ -7,7 +7,7 @@ use solana_program::{
 use thiserror::Error;
 
 #[derive(Error, Debug, Copy, Clone, FromPrimitive, PartialEq)]
-pub enum VetraError {
+pub enum VetrasError {
     // Model Submission Errors
     #[error("Model data exceeds maximum size limit of 10MB")]
     ModelTooLarge = 0,
@@ -93,29 +93,29 @@ pub enum VetraError {
     UninitializedAccount = 72,
 }
 
-impl From<VetraError> for ProgramError {
-    fn from(e: VetraError) -> Self {
+impl From<VetrasError> for ProgramError {
+    fn from(e: VetrasError) -> Self {
         ProgramError::Custom(e as u32)
     }
 }
 
-impl<T> DecodeError<T> for VetraError {
+impl<T> DecodeError<T> for VetrasError {
     fn type_of() -> &'static str {
-        "VetraError"
+        "VetrasError"
     }
 }
 
-pub type VetraResult<T> = Result<T, VetraError>;
+pub type VetrasResult<T> = Result<T, VetrasError>;
 
 pub trait ErrorHandler {
-    fn log_and_map<T>(self, error_context: &str) -> VetraResult<T>
+    fn log_and_map<T>(self, error_context: &str) -> VetrasResult<T>
     where
         Self: Sized + std::fmt::Debug,
     {
         msg!("Error occurred in {}: {:?}", error_context, self);
         Err(match self {
-            // Map specific error types to VetraError variants
-            _ => VetraError::StorageError, // Default mapping for unknown errors
+            // Map specific error types to VetrasError variants
+            _ => VetrasError::StorageError, // Default mapping for unknown errors
         })
     }
 }
@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn test_error_conversion() {
-        let error = VetraError::ModelTooLarge;
+        let error = VetrasError::ModelTooLarge;
         let program_error: ProgramError = error.into();
         assert_eq!(program_error, ProgramError::Custom(0));
     }
@@ -139,11 +139,11 @@ mod tests {
     #[test]
     fn test_error_messages() {
         assert_eq!(
-            VetraError::ModelTooLarge.to_string(),
+            VetrasError::ModelTooLarge.to_string(),
             "Model data exceeds maximum size limit of 10MB"
         );
         assert_eq!(
-            VetraError::ValidationInProgress.to_string(),
+            VetrasError::ValidationInProgress.to_string(),
             "Validation session already in progress for this model"
         );
     }
@@ -151,23 +151,23 @@ mod tests {
     #[test]
     fn test_error_handling_trait() {
         let io_error = std::io::Error::new(std::io::ErrorKind::Other, "test error");
-        let result: VetraResult<()> = io_error.log_and_map("IO Operation");
-        assert!(matches!(result, Err(VetraError::StorageError)));
+        let result: VetrasResult<()> = io_error.log_and_map("IO Operation");
+        assert!(matches!(result, Err(VetrasError::StorageError)));
     }
 
     #[test]
     fn test_all_error_variants() {
         // Test that all error variants can be converted to ProgramError
         let errors = [
-            VetraError::ModelTooLarge,
-            VetraError::InvalidModelFormat,
-            VetraError::ValidationInProgress,
-            VetraError::ConsensusFailure,
-            VetraError::UnauthorizedSubmission,
-            VetraError::InvalidLLMResponse,
-            VetraError::StorageError,
-            VetraError::VersionMismatch,
-            VetraError::InvalidStateTransition,
+            VetrasError::ModelTooLarge,
+            VetrasError::InvalidModelFormat,
+            VetrasError::ValidationInProgress,
+            VetrasError::ConsensusFailure,
+            VetrasError::UnauthorizedSubmission,
+            VetrasError::InvalidLLMResponse,
+            VetrasError::StorageError,
+            VetrasError::VersionMismatch,
+            VetrasError::InvalidStateTransition,
         ];
 
         for error in errors.iter() {

@@ -42,7 +42,7 @@ anyhow = "1.0"
 mockall = "0.12"
 
 [lib]
-name = "vetra_core"
+name = "vetras_core"
 crate-type = ["cdylib", "lib"]
 
 [profile.release]
