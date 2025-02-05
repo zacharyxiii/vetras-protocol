@@ -16,7 +16,7 @@ pub mod utils;
 
 // Re-export commonly used types
 pub use crate::{
-    errors::{VetraError, VetraResult},
+    errors::{VetrasError, VetrasResult},
     processor::Processor,
     state::{ModelSubmission, ModelType, ValidationStatus},
 };
@@ -41,7 +41,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    msg!("VETRA: Processing instruction");
+    msg!("VETRAS: Processing instruction");
     
     // Log basic transaction information
     if cfg!(debug_assertions) {
@@ -64,7 +64,7 @@ pub fn process_instruction(
             if transaction_start % solana_program::clock::DEFAULT_TICKS_PER_SLOT as i64 
                 > VALIDATION_TIMEOUT_SECONDS - 1 {
                 msg!("Error: Transaction would exceed time limit");
-                return Err(VetraError::ValidationTimeout.into());
+                return Err(VetrasError::ValidationTimeout.into());
             }
         }
     }
