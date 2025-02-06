@@ -1,0 +1,130 @@
+[package]
+name = "vetra-backend"
+version = "0.1.0"
+edition = "2021"
+authors = ["Vetra Team"]
+description = "Backend service for the Vetra AI model validation platform"
+license = "Apache-2.0"
+repository = "https://github.com/vetra-ai/vetra"
+
+[dependencies]
+# Web framework and related
+actix-web = "4.4"
+actix-cors = "0.6"
+actix-service = "2.0"
+actix-http = "3.4"
+actix-rt = "2.9"
+
+# Serialization/Deserialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3"
+borsh = "0.10"
+
+# Async runtime
+tokio = { version = "1.34", features = ["full"] }
+futures = "0.3"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "json", "uuid"] }
+redis = { version = "0.23", features = ["tokio-comp", "connection-manager"] }
+
+# Blockchain integration
+solana-sdk = "1.17"
+solana-client = "1.17"
+solana-program = "1.17"
+anchor-client = "0.28"
+
+# AI/ML dependencies
+tokenizers = "0.14"
+onnxruntime = "0.0.14"
+half = "2.3"
+ndarray = "0.15"
+
+# Cryptography
+ed25519-dalek = "1.0"
+sha2 = "0.10"
+base64 = "0.21"
+rand = "0.8"
+
+# Monitoring and metrics
+prometheus = { version = "0.13", features = ["process"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+opentelemetry = { version = "0.20", features = ["rt-tokio"] }
+opentelemetry-jaeger = "0.19"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+time = "0.3"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Utils
+async-trait = "0.1"
+lazy_static = "1.4"
+parking_lot = "0.12"
+uuid = { version = "1.5", features = ["v4", "serde"] }
+url = "2.4"
+regex = "1.10"
+derive_more = "0.99"
+
+# Configuration
+config = { version = "0.13", features = ["yaml"] }
+dotenv = "0.15"
+
+# Validation & testing dependencies
+validator = { version = "0.16", features = ["derive"] }
+mockall = "0.11"
+wiremock = "0.5"
+
+[dev-dependencies]
+criterion = "0.5"
+pretty_assertions = "1.4"
+test-case = "3.2"
+fake = { version = "2.8", features = ["derive"] }
+rstest = "0.18"
+tokio-test = "0.4"
+
+[[bench]]
+name = "validation_benchmarks"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
+debug = false
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.test]
+opt-level = 0
+debug = true
+
+[workspace]
+members = [
+    ".",
+    "migration",
+]
+
+[features]
+default = ["postgresql"]
+postgresql = ["sqlx/postgres"]
+sqlite = ["sqlx/sqlite"]
+mock = []
+telemetry = ["opentelemetry", "opentelemetry-jaeger"]
+metrics = ["prometheus"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.cargo-udeps]
+ignore = []
